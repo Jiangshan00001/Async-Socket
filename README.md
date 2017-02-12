@@ -1,7 +1,7 @@
 # Async-Socket
 Asynchronous socket class implemented in C++ for Linux systems.
 
-Server example :
+## Server example
 
     void onMessage(Socket sock, string message)
     {
@@ -48,7 +48,7 @@ Server example :
         }
     }
     
-Client example :
+## Client example
 
     void onMessage(Socket sock, string message)
     {
