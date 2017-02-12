@@ -48,6 +48,10 @@ Asynchronous socket class implemented in C++ for Linux systems.
         }
     }
     
+# Compile
+
+g++ server.cpp -o server Socket.h Socket.cpp Server.h Server.cpp -pthread
+    
 ## Client example
 
     void onMessage(Socket sock, string message)
@@ -88,3 +92,7 @@ Asynchronous socket class implemented in C++ for Linux systems.
             cout << "Could not connect to server" << endl;
         }
     }
+
+# Compile
+
+g++ client.cpp -o client Socket.h Socket.cpp -pthread
