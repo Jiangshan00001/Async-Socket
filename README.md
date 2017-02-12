@@ -48,9 +48,9 @@ Asynchronous socket class implemented in C++ for Linux systems.
         }
     }
     
-# Compile
+### Compile
 
-g++ server.cpp -o server Socket.h Socket.cpp Server.h Server.cpp -pthread
+    g++ server.cpp -o server Socket.h Socket.cpp Server.h Server.cpp -pthread
     
 ## Client example
 
@@ -93,6 +93,6 @@ g++ server.cpp -o server Socket.h Socket.cpp Server.h Server.cpp -pthread
         }
     }
 
-# Compile
+### Compile
 
-g++ client.cpp -o client Socket.h Socket.cpp -pthread
+    g++ client.cpp -o client Socket.h Socket.cpp -pthread
