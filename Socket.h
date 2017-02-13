@@ -25,7 +25,7 @@ public:
     bool startReceiving();
     void setReceiveCallback(void (*callbackMessage)(Socket, std::string));
     void setCloseCallback(void (*callbackClose)(Socket));
-    void setErrorCallback(void (*callbackError)(std::string));
+    void setErrorCallback(void (*callbackError)(Socket, std::string));
 
     bool operator==(Socket const &s);
     bool operator!=(Socket const &s);
@@ -41,7 +41,7 @@ private:
 
     void (*callbackMessage)(Socket, std::string);
     void (*callbackClose)(Socket);
-    void (*callbackError)(std::string);
+    void (*callbackError)(Socket, std::string);
 
     void reportError();
     void receive();

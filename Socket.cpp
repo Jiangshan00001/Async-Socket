@@ -99,7 +99,7 @@ void Socket::setCloseCallback(void (*callbackClose)(Socket))
     this->callbackClose = callbackClose;
 }
 
-void Socket::setErrorCallback(void (*callbackError)(std::string))
+void Socket::setErrorCallback(void (*callbackError)(Socket, std::string))
 {
     this->callbackError = callbackError;
 }
@@ -107,7 +107,7 @@ void Socket::setErrorCallback(void (*callbackError)(std::string))
 void Socket::reportError()
 {
     if(callbackError!=0){
-        callbackError(strerror(errno));
+        callbackError(*this, strerror(errno));
     }
 }
 
