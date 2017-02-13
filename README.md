@@ -80,9 +80,9 @@ Asynchronous socket class implemented in C++ for Linux systems.
             sock.setErrorCallback(onError);
             sock.startReceiving(); // start a thread to listen for incoming messages
 
+            string msg;
             while(1)
             {
-                string msg;
                 cout << "input: ";
                 getline(cin, msg);
                 sock.send(msg);
