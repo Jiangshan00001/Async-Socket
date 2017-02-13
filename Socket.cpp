@@ -118,11 +118,6 @@ bool Socket::close()
         reportError();
         return false;
     }
-
-    this->callbackMessage = 0;
-    this->callbackClose = 0;
-    this->callbackError = 0;
-    
     return true;
 }
 
