@@ -26,7 +26,6 @@ Socket::Socket()
 
 void Socket::init()
 {
-    this->callbackMessage = 0;
     this->callbackClose = 0;
     this->callbackError = 0;
     this->sizeOfHeader = 32;
@@ -51,15 +50,17 @@ bool Socket::connect()
     return true;
 }
 
-bool Socket::send(std::string message)
+bool Socket::send(std::string key, std::string message)
 {
-    int n = htonl(message.size());
+    std::string msg = key+"+"+message;
+
+    int n = htonl(msg.size());
     if(::send(sock, (const char*)&n, sizeOfHeader, 0) == -1){
         reportError();
         return false;
     }
 
-    if(::send(sock, message.c_str(), message.size(), 0) == -1){
+    if(::send(sock, msg.c_str(), msg.size(), 0) == -1){
         reportError();
         return false;
     }
@@ -67,15 +68,17 @@ bool Socket::send(std::string message)
     return true;
 }
 
-bool Socket::write(std::string message)
+bool Socket::write(std::string key, std::string message)
 {
-    int n = htonl(message.size());
+    std::string msg = key+"+"+message;
+
+    int n = htonl(msg.size());
     if(::write(sock, (const char*)&n, sizeOfHeader) == -1){
         reportError();
         return false;
     }
 
-    if(::write(sock, message.c_str(), message.size()) == -1){
+    if(::write(sock, msg.c_str(), msg.size()) == -1){
         reportError();
         return false;
     }
@@ -89,9 +92,18 @@ bool Socket::startReceiving()
     return pthread_create(&thread_id, NULL, Socket::start_thread, this) == 0;
 }
 
-void Socket::setReceiveCallback(void (*callbackMessage)(Socket, std::string))
+void Socket::setMessageCallback(std::string key, void (*callback)(Socket, std::string, std::string))
 {
-    this->callbackMessage = callbackMessage;
+    this->callbackMessage.push_back(std::make_pair(key, callback));
+}
+
+void Socket::removeMessageCallback(std::string key)
+{
+    for (int i=0 ; i<callbackMessage.size() ; i++){
+        if(callbackMessage[i].first == key){
+            callbackMessage.erase(callbackMessage.begin()+i);
+        }
+    }
 }
 
 void Socket::setCloseCallback(void (*callbackClose)(Socket))
@@ -119,9 +131,12 @@ bool Socket::close()
         return false;
     }
 
-    this->callbackMessage = 0;
+    for(int i=0 ; i<callbackMessage.size() ; i++){
+        this->callbackMessage[i].second = 0;
+    }
     this->callbackClose = 0;
     this->callbackError = 0;
+    this->sock = -1;
 
     return true;
 }
@@ -130,8 +145,9 @@ void Socket::receive()
 {
     int sizeOfPackageNet;
     int sizeOfMessage;
-    int q,r,i,n;
+    int q,r,i,n,p;
     std::stringstream finalMessage;
+    std::string msg, key, body;
 
     while (1) {
         n = ::recv(sock, &sizeOfPackageNet, sizeOfHeader, 0);
@@ -179,8 +195,15 @@ void Socket::receive()
                 delete[] rest;
             }
 
-            if(callbackMessage!=0){
-                callbackMessage(*this, finalMessage.str());
+            msg = finalMessage.str();
+            p = msg.find_first_of("+");
+            key = msg.substr(0, p);
+            body = msg.substr(p+1);
+
+            for(i=0 ; i<callbackMessage.size() ; i++){
+                if(callbackMessage[i].first==key){
+                    callbackMessage[i].second(*this, key, body);
+                }
             }
 
             finalMessage.clear();
@@ -197,6 +220,10 @@ void Socket::receive()
         }
         usleep(100);
     }
+}
+
+int Socket::getSocket(){
+    return sock;
 }
 
 bool Socket::operator==(Socket const &s)

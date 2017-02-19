@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <errno.h>
 #include <sstream>
+#include <vector>
+#include <utility>
 
 class Socket
 {
@@ -20,12 +22,15 @@ public:
 
     bool connect();
     bool close();
-    bool send(std::string message);
-    bool write(std::string message);
+    bool send(std::string key, std::string message);
+    bool write(std::string key, std::string message);
     bool startReceiving();
-    void setReceiveCallback(void (*callbackMessage)(Socket, std::string));
+    void setMessageCallback(std::string key, void (*callback)(Socket, std::string, std::string));
+    void removeMessageCallback(std::string key);
     void setCloseCallback(void (*callbackClose)(Socket));
     void setErrorCallback(void (*callbackError)(Socket, std::string));
+
+    int getSocket();
 
     bool operator==(Socket const &s);
     bool operator!=(Socket const &s);
@@ -39,7 +44,7 @@ private:
     int sizeOfHeader;
     int sizeOfPackage;
 
-    void (*callbackMessage)(Socket, std::string);
+    std::vector<std::pair<std::string, void (*)(Socket, std::string, std::string)> > callbackMessage;
     void (*callbackClose)(Socket);
     void (*callbackError)(Socket, std::string);
 
