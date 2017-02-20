@@ -5,4 +5,4 @@ Asynchronous socket class implemented in C++ for Linux systems.
 
     git clone https://github.com/omaflak/Async-Socket.git
     cd Async-Socket/src
-    sh compile.sh
+    sh compile.sh
