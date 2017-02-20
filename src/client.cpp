@@ -1,13 +1,5 @@
-#include <curses.h>
-#include <pthread.h>
-#include <unistd.h>
-#include <vector>
-#include <string>
-#include <stdlib.h>
-#include <utility>
-#include <sstream>
 #include <iostream>
-
+#include <stdlib.h>
 #include "../lib/Socket.h"
 
 using namespace std;
