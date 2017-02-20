@@ -9,6 +9,8 @@ Socket::Socket(std::string ip, int port)
     this->server.sin_family = AF_INET;
     this->server.sin_port = htons(port);
 
+    this->sock = -1;
+
     init();
 }
 
@@ -94,6 +96,7 @@ bool Socket::startReceiving()
 
 void Socket::setMessageCallback(std::string key, void (*callback)(Socket, std::string, std::string))
 {
+    assert(key.find("+")==-1);
     this->callbackMessage.push_back(std::make_pair(key, callback));
 }
 
